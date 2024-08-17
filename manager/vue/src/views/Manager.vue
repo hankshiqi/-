@@ -4,7 +4,7 @@
     <div class="manager-header">
       <div class="manager-header-left">
         <img src="@/assets/imgs/logo.png" />
-        <div class="title">后台管理系统</div>
+        <div class="title">博客论坛平台</div>
       </div>
 
       <div class="manager-header-center">
@@ -43,13 +43,18 @@
               <i class="el-icon-menu"></i><span>信息管理</span>
             </template>
             <el-menu-item index="/notice">公告信息</el-menu-item>
+            <el-menu-item index="/category">博客分类</el-menu-item>
+            <el-menu-item index="/blog">博客管理</el-menu-item>
+            <el-menu-item index="/activity">活动管理</el-menu-item>
+            <el-menu-item index="/comment">评论管理</el-menu-item>
           </el-submenu>
 
-          <el-submenu index="user">
+          <el-submenu index="user" v-if="user.role === 'ADMIN'">
             <template slot="title">
               <i class="el-icon-menu"></i><span>用户管理</span>
             </template>
             <el-menu-item index="/admin">管理员信息</el-menu-item>
+            <el-menu-item index="/user">用户信息</el-menu-item>
           </el-submenu>
         </el-menu>
       </div>
@@ -83,6 +88,8 @@ export default {
     goToPerson() {
       if (this.user.role === 'ADMIN') {
         this.$router.push('/adminPerson')
+      }else if(this.user.role === 'USER'){
+        this.$router.push('/userPerson')
       }
     },
     logout() {

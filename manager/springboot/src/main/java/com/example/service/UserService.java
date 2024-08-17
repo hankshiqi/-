@@ -6,9 +6,9 @@ import com.example.common.Constants;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.common.enums.RoleEnum;
 import com.example.entity.Account;
-import com.example.entity.Admin;
+import com.example.entity.User;
 import com.example.exception.CustomException;
-import com.example.mapper.AdminMapper;
+import com.example.mapper.UserMapper;
 import com.example.utils.TokenUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -16,41 +16,40 @@ import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 
 /**
  * 管理员业务处理
  **/
 @Service
-public class AdminService {
+public class UserService {
 
     @Resource
-    private AdminMapper adminMapper;
+    private UserMapper userMapper;
 
     /**
      * 新增
      */
-    public void add(Admin admin) {
-        Admin dbAdmin = adminMapper.selectByUsername(admin.getUsername());
-        if (ObjectUtil.isNotNull(dbAdmin)) {
+    public void add(User user) {
+        User dbUser = userMapper.selectByUsername(user.getUsername());
+        if (ObjectUtil.isNotNull(dbUser)) {
             throw new CustomException(ResultCodeEnum.USER_EXIST_ERROR);
         }
-        if (ObjectUtil.isEmpty(admin.getPassword())) {
-            admin.setPassword(Constants.USER_DEFAULT_PASSWORD);
+        if (ObjectUtil.isEmpty(user.getPassword())) {
+            user.setPassword(Constants.USER_DEFAULT_PASSWORD);
         }
-        if (ObjectUtil.isEmpty(admin.getName())) {
-            admin.setName(admin.getUsername());
+        if (ObjectUtil.isEmpty(user.getName())) {
+            user.setName(user.getUsername());
         }
-        admin.setRole(RoleEnum.ADMIN.name());
-        adminMapper.insert(admin);
+        user.setRole(RoleEnum.USER.name());
+        userMapper.insert(user);
     }
 
     /**
      * 删除
      */
     public void deleteById(Integer id) {
-        adminMapper.deleteById(id);
+        userMapper.deleteById(id);
     }
 
     /**
@@ -58,37 +57,37 @@ public class AdminService {
      */
     public void deleteBatch(List<Integer> ids) {
         for (Integer id : ids) {
-            adminMapper.deleteById(id);
+            userMapper.deleteById(id);
         }
     }
 
     /**
      * 修改
      */
-    public void updateById(Admin admin) {
-        adminMapper.updateById(admin);
+    public void updateById(User user) {
+        userMapper.updateById(user);
     }
 
     /**
      * 根据ID查询
      */
-    public Admin selectById(Integer id) {
-        return adminMapper.selectById(id);
+    public User selectById(Integer id) {
+        return userMapper.selectById(id);
     }
 
     /**
      * 查询所有
      */
-    public List<Admin> selectAll(Admin admin) {
-        return adminMapper.selectAll(admin);
+    public List<User> selectAll(User user) {
+        return userMapper.selectAll(user);
     }
 
     /**
      * 分页查询
      */
-    public PageInfo<Admin> selectPage(Admin admin, Integer pageNum, Integer pageSize) {
+    public PageInfo<User> selectPage(User user, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Admin> list = adminMapper.selectAll(admin);
+        List<User> list = userMapper.selectAll(user);
         return PageInfo.of(list);
     }
 
@@ -96,42 +95,47 @@ public class AdminService {
      * 登录
      */
     public Account login(Account account) {
-        Account dbAdmin = adminMapper.selectByUsername(account.getUsername());
-        if (ObjectUtil.isNull(dbAdmin)) {
+        Account dbUser = userMapper.selectByUsername(account.getUsername());
+        if (ObjectUtil.isNull(dbUser)) {
             throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
         }
-        if (!account.getPassword().equals(dbAdmin.getPassword())) {
+        if (!account.getPassword().equals(dbUser.getPassword())) {
             throw new CustomException(ResultCodeEnum.USER_ACCOUNT_ERROR);
         }
         // 生成token
-        String tokenData = dbAdmin.getId() + "-" + RoleEnum.ADMIN.name();
-        String token = TokenUtils.createToken(tokenData, dbAdmin.getPassword());
-        dbAdmin.setToken(token);
-        return dbAdmin;
+        String tokenData=null;
+        if(dbUser.getRole().equals(RoleEnum.ADMIN.name())){
+            tokenData= dbUser.getId() + "-" + RoleEnum.ADMIN.name();
+        }else{
+            tokenData= dbUser.getId() + "-" + RoleEnum.USER.name();
+        }
+        String token = TokenUtils.createToken(tokenData, dbUser.getPassword());
+        dbUser.setToken(token);
+        return dbUser;
     }
 
     /**
      * 注册
      */
     public void register(Account account) {
-        Admin admin = new Admin();
-        BeanUtils.copyProperties(account, admin);
-        add(admin);
+        User user = new User();
+        BeanUtils.copyProperties(account, user);
+        add(user);
     }
 
     /**
      * 修改密码
      */
     public void updatePassword(Account account) {
-        Admin dbAdmin = adminMapper.selectByUsername(account.getUsername());
-        if (ObjectUtil.isNull(dbAdmin)) {
+        User dbUser = userMapper.selectByUsername(account.getUsername());
+        if (ObjectUtil.isNull(dbUser)) {
             throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
         }
-        if (!account.getPassword().equals(dbAdmin.getPassword())) {
+        if (!account.getPassword().equals(dbUser.getPassword())) {
             throw new CustomException(ResultCodeEnum.PARAM_PASSWORD_ERROR);
         }
-        dbAdmin.setPassword(account.getNewPassword());
-        adminMapper.updateById(dbAdmin);
+        dbUser.setPassword(account.getNewPassword());
+        userMapper.updateById(dbUser);
     }
 
 }

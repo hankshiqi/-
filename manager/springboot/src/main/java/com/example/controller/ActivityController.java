@@ -1,8 +1,9 @@
 package com.example.controller;
 
 import com.example.common.Result;
+import com.example.entity.Activity;
 import com.example.entity.Blog;
-import com.example.service.BlogService;
+import com.example.service.ActivityService;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +14,18 @@ import java.util.List;
  * 公告信息表前端操作接口
  **/
 @RestController
-@RequestMapping("/blog")
-public class BlogController {
+@RequestMapping("/activity")
+public class ActivityController {
 
     @Resource
-    private BlogService blogService;
+    private ActivityService activityService;
 
     /**
      * 新增
      */
     @PostMapping("/add")
-    public Result add(@RequestBody Blog blog) {
-        blogService.add(blog);
+    public Result add(@RequestBody Activity activity) {
+        activityService.add(activity);
         return Result.success();
     }
 
@@ -33,7 +34,7 @@ public class BlogController {
      */
     @DeleteMapping("/delete/{id}")
     public Result deleteById(@PathVariable Integer id) {
-        blogService.deleteById(id);
+        activityService.deleteById(id);
         return Result.success();
     }
 
@@ -42,7 +43,7 @@ public class BlogController {
      */
     @DeleteMapping("/delete/batch")
     public Result deleteBatch(@RequestBody List<Integer> ids) {
-        blogService.deleteBatch(ids);
+        activityService.deleteBatch(ids);
         return Result.success();
     }
 
@@ -50,8 +51,8 @@ public class BlogController {
      * 修改
      */
     @PutMapping("/update")
-    public Result updateById(@RequestBody Blog blog) {
-        blogService.updateById(blog);
+    public Result updateById(@RequestBody Activity activity) {
+        activityService.updateById(activity);
         return Result.success();
     }
 
@@ -60,16 +61,16 @@ public class BlogController {
      */
     @GetMapping("/selectById/{id}")
     public Result selectById(@PathVariable Integer id) {
-        Blog blog = blogService.selectById(id);
-        return Result.success(blog);
+        Activity activity = activityService.selectById(id);
+        return Result.success(activity);
     }
 
     /**
      * 查询所有
      */
     @GetMapping("/selectAll")
-    public Result selectAll(Blog blog ) {
-        List<Blog> list = blogService.selectAll(blog);
+    public Result selectAll(Activity activity ) {
+        List<Activity> list = activityService.selectAll(activity);
         return Result.success(list);
     }
 
@@ -77,11 +78,16 @@ public class BlogController {
      * 分页查询
      */
     @GetMapping("/selectPage")
-    public Result selectPage(Blog blog,
+    public Result selectPage(Activity activity,
                              @RequestParam(defaultValue = "1") Integer pageNum,
                              @RequestParam(defaultValue = "10") Integer pageSize) {
-        PageInfo<Blog> page = blogService.selectPage(blog, pageNum, pageSize);
+        PageInfo<Activity> page = activityService.selectPage(activity, pageNum, pageSize);
         return Result.success(page);
+    }
+    @GetMapping("/selectTopActivity")
+    public Result selectTopActivity() {
+        List<Activity> list=activityService.selectTopActivity();
+        return Result.success(list);
     }
 
 }

@@ -6,7 +6,7 @@
       <el-button type="warning" plain style="margin-left: 10px" @click="reset">重置</el-button>
     </div>
 
-    <div class="operation">
+    <div class="operation" v-if="user.role==='ADMIN'">
       <el-button type="primary" plain @click="handleAdd">新增</el-button>
       <el-button type="danger" plain @click="delBatch">批量删除</el-button>
     </div>
@@ -22,8 +22,8 @@
 
         <el-table-column label="操作" width="180" align="center">
           <template v-slot="scope">
-            <el-button plain type="primary" @click="handleEdit(scope.row)" size="mini">编辑</el-button>
-            <el-button plain type="danger" size="mini" @click=del(scope.row.id)>删除</el-button>
+            <el-button plain type="primary" @click="handleEdit(scope.row)" size="mini" v-if="user.role==='ADMIN'">编辑</el-button>
+            <el-button plain type="danger" size="mini" @click=del(scope.row.id)  v-if="user.role==='ADMIN'">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

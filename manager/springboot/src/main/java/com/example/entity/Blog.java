@@ -1,11 +1,18 @@
 package com.example.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
 /**
  * 公告信息表
 */
-public class Notice implements Serializable {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Blog implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** ID */
@@ -14,49 +21,19 @@ public class Notice implements Serializable {
     private String title;
     /** 内容 */
     private String content;
-    /** 创建时间 */
-    private String time;
+    private String descr;
     /** 创建人 */
-    private String user;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
+    private String cover;
+    private String tags;
+    private Integer userId;
+    private String date;
+    private Integer readCount;
+    private Integer categoryId;
+    private String userName;
+    private String categoryName;
+    private User user;
+    private Integer likesNum;
+    private Integer collectsNum;
+    private Boolean isLiked;
+    private Boolean isCollected;
 }

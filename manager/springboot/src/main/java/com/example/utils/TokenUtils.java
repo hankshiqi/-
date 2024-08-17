@@ -8,6 +8,7 @@ import com.example.common.Constants;
 import com.example.common.enums.RoleEnum;
 import com.example.entity.Account;
 import com.example.service.AdminService;
+import com.example.service.UserService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,13 +30,16 @@ public class TokenUtils {
     private static final Logger log = LoggerFactory.getLogger(TokenUtils.class);
 
     private static AdminService staticAdminService;
+    private static UserService staticUserService;
 
     @Resource
     AdminService adminService;
-
-    @PostConstruct
+    @Resource
+    UserService userService;
+    @PostConstruct//在类实例化完之后立即执行,在依赖注入完以后就进行调用
     public void setUserService() {
         staticAdminService = adminService;
+        staticUserService = userService;
     }
 
     /**
@@ -60,6 +64,8 @@ public class TokenUtils {
                 String role = userRole.split("-")[1];    // 获取角色
                 if (RoleEnum.ADMIN.name().equals(role)) {
                     return staticAdminService.selectById(Integer.valueOf(userId));
+                } else if (RoleEnum.USER.name().equals(role)) {
+                    return staticUserService.selectById(Integer.valueOf(userId));
                 }
             }
         } catch (Exception e) {

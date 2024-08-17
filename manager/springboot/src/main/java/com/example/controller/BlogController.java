@@ -1,29 +1,31 @@
 package com.example.controller;
 
 import com.example.common.Result;
-import com.example.entity.Notice;
-import com.example.service.NoticeService;
+import com.example.entity.Blog;
+import com.example.service.BlogService;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.Set;
 
 /**
  * 公告信息表前端操作接口
  **/
 @RestController
-@RequestMapping("/notice")
-public class NoticeController {
+@RequestMapping("/blog")
+public class BlogController {
 
     @Resource
-    private NoticeService noticeService;
+    private BlogService blogService;
 
     /**
      * 新增
      */
     @PostMapping("/add")
-    public Result add(@RequestBody Notice notice) {
-        noticeService.add(notice);
+    public Result add(@RequestBody Blog blog) {
+        blogService.add(blog);
         return Result.success();
     }
 
@@ -32,7 +34,7 @@ public class NoticeController {
      */
     @DeleteMapping("/delete/{id}")
     public Result deleteById(@PathVariable Integer id) {
-        noticeService.deleteById(id);
+        blogService.deleteById(id);
         return Result.success();
     }
 
@@ -41,7 +43,7 @@ public class NoticeController {
      */
     @DeleteMapping("/delete/batch")
     public Result deleteBatch(@RequestBody List<Integer> ids) {
-        noticeService.deleteBatch(ids);
+        blogService.deleteBatch(ids);
         return Result.success();
     }
 
@@ -49,8 +51,8 @@ public class NoticeController {
      * 修改
      */
     @PutMapping("/update")
-    public Result updateById(@RequestBody Notice notice) {
-        noticeService.updateById(notice);
+    public Result updateById(@RequestBody Blog blog) {
+        blogService.updateById(blog);
         return Result.success();
     }
 
@@ -59,16 +61,17 @@ public class NoticeController {
      */
     @GetMapping("/selectById/{id}")
     public Result selectById(@PathVariable Integer id) {
-        Notice notice = noticeService.selectById(id);
-        return Result.success(notice);
+        Blog blog = blogService.selectById(id);
+        return Result.success(blog);
     }
+
 
     /**
      * 查询所有
      */
     @GetMapping("/selectAll")
-    public Result selectAll(Notice notice ) {
-        List<Notice> list = noticeService.selectAll(notice);
+    public Result selectAll(Blog blog ) {
+        List<Blog> list = blogService.selectAll(blog);
         return Result.success(list);
     }
 
@@ -76,11 +79,36 @@ public class NoticeController {
      * 分页查询
      */
     @GetMapping("/selectPage")
-    public Result selectPage(Notice notice,
+    public Result selectPage(Blog blog,
                              @RequestParam(defaultValue = "1") Integer pageNum,
                              @RequestParam(defaultValue = "10") Integer pageSize) {
-        PageInfo<Notice> page = noticeService.selectPage(notice, pageNum, pageSize);
+        PageInfo<Blog> page = blogService.selectPage(blog, pageNum, pageSize);
         return Result.success(page);
+    }
+    @GetMapping("/selectTop")
+    public Result selectTop(){
+        List<Blog> list=blogService.selectTop();
+        return Result.success(list);
+    }
+    @PostMapping("/selectRecommendBlog")
+    public Result selectRecommendBlog(@RequestBody Blog blog){
+        Set<Blog> blogSet=blogService.selectRecommendBlog(blog);
+        return Result.success(blogSet);
+    }
+    @GetMapping("/countOfOneAuthorBlogs/{userId}")
+    public Result countOfOneAuthorBlogs(@PathVariable Integer userId){
+        Integer count=blogService.countOfOneAuthorBlogs(userId);
+        return Result.success(count);
+    }
+    @GetMapping("/countOfOneAuthorLikes/{userId}")
+    public Result countOfOneAuthorLikes(@PathVariable Integer userId) {
+        Integer count = blogService.countOfOneAuthorLikes(userId);
+        return Result.success(count);
+    }
+    @GetMapping("/countOfOneAuthorCollects/{userId}")
+    public Result countOfOneAuthorCollects(@PathVariable Integer userId) {
+        Integer count = blogService.countOfOneAuthorCollects(userId);
+        return Result.success(count);
     }
 
 }

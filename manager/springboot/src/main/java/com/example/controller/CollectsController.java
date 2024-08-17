@@ -1,23 +1,21 @@
 package com.example.controller;
 
 import com.example.common.Result;
-import com.example.entity.Likes;
-import com.example.service.LikesService;
+import com.example.entity.Collects;
+import com.example.service.CollectsService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/likes")
-public class LikesController {
+@RequestMapping("/collects")
+public class CollectsController {
     @Resource
-    private LikesService likesService;
+    private CollectsService collectsService;
 
-    @PostMapping("/changeLikes")
-    public Result changeLikes(@RequestBody Likes likes) {
-        likesService.changeLikes(likes);
+    @PostMapping("/changeCollects")
+    public Result changeCollects(@RequestBody Collects collects) {
+        collectsService.changeCollects(collects);
         return Result.success();
     }
+
 }

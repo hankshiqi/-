@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Likes implements Serializable {
+public class Collects implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** ID */

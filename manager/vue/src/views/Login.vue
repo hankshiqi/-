@@ -7,17 +7,22 @@
           <el-input prefix-icon="el-icon-user" placeholder="请输入账号" v-model="form.username"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input prefix-icon="el-icon-lock" placeholder="请输入密码" show-password  v-model="form.password"></el-input>
+          <el-input prefix-icon="el-icon-lock" placeholder="请输入密码" show-password v-model="form.password"></el-input>
         </el-form-item>
+        <el-form-item prop="role">
+          <el-select style="width: 100%;margin-bottom:5px;" v-model="form.role">
+            <el-option v-for="item in ['USER','ADMIN']" :key="item" :label="item" :value="item"></el-option>
+          </el-select>
+          </el-form-item>
         <el-form-item>
-          <el-button style="width: 100%; background-color: #333; border-color: #333; color: white" @click="login">登 录</el-button>
+          <el-button style="width: 100%; background-color: #333; border-color: #333; color: white" @click="login">登
+            录</el-button>
         </el-form-item>
-<!--        <div style="display: flex; align-items: center">-->
-<!--          <div style="flex: 1"></div>-->
-<!--          <div style="flex: 1; text-align: right">-->
-<!--            还没有账号？请 <a href="/register">注册</a>-->
-<!--          </div>-->
-<!--        </div>-->
+        <div style="display: flex; align-items: center">
+          <div style="flex: 1; text-align: right">
+            还没有账号？请 <a href="/register">注册</a>
+          </div>
+        </div>
       </el-form>
     </div>
   </div>
@@ -74,6 +79,7 @@ export default {
   justify-content: center;
   color: #666;
 }
+
 a {
   color: #2a60c9;
 }

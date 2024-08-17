@@ -1,19 +1,19 @@
 package com.example.mapper;
 
-import com.example.entity.Admin;
+import com.example.entity.User;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 /**
- * 操作admin相关数据接口
+ * 操作user相关数据接口
 */
-public interface AdminMapper {
+public interface UserMapper {
 
     /**
       * 新增
     */
-    int insert(Admin admin);
+    int insert(User user);
 
     /**
       * 删除
@@ -23,18 +23,18 @@ public interface AdminMapper {
     /**
       * 修改
     */
-    int updateById(Admin admin);
+    int updateById(User user);
 
     /**
       * 根据ID查询
     */
-    Admin selectById(Integer id);
+    User selectById(Integer id);
 
     /**
       * 查询所有
     */
-    List<Admin> selectAll(Admin admin);
+    List<User> selectAll(User user);
 
-    @Select("select * from admin where username = #{username}")
-    Admin selectByUsername(String username);
+    @Select("select * from user where name = #{username}")
+    User selectByUsername(String username);
 }

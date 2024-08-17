@@ -52,7 +52,8 @@ export default {
         confirmPass: [
           { validator: validatePassword, trigger: 'blur' }
         ]
-      }
+      },
+    form: {role:'USER'},
     }
   },
   created() {

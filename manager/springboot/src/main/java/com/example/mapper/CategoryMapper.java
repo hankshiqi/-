@@ -1,17 +1,20 @@
 package com.example.mapper;
 
-import com.example.entity.Notice;
+import com.example.entity.Category;
+import com.example.entity.User;
+import org.apache.ibatis.annotations.Select;
+
 import java.util.List;
 
 /**
- * 操作notice相关数据接口
+ * 操作category相关数据接口
 */
-public interface NoticeMapper {
+public interface CategoryMapper {
 
     /**
       * 新增
     */
-    int insert(Notice notice);
+    int insert(Category category);
 
     /**
       * 删除
@@ -21,16 +24,18 @@ public interface NoticeMapper {
     /**
       * 修改
     */
-    int updateById(Notice notice);
+    int updateById(Category category);
 
     /**
       * 根据ID查询
     */
-    Notice selectById(Integer id);
+    Category selectById(Integer id);
 
     /**
       * 查询所有
     */
-    List<Notice> selectAll(Notice notice);
+    List<Category> selectAll(Category category);
 
+    @Select("select * from category where name = #{categoryName}")
+    Category selectByCategoryname(String categoryName);
 }

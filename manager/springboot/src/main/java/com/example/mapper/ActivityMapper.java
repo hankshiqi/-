@@ -1,18 +1,18 @@
 package com.example.mapper;
 
-import com.example.entity.Blog;
+import com.example.entity.Activity;
 
 import java.util.List;
 
 /**
- * 操作blog相关数据接口
+ * 操作activity相关数据接口
 */
-public interface BlogMapper {
+public interface ActivityMapper {
 
     /**
       * 新增
     */
-    int insert(Blog blog);
+    int insert(Activity activity);
 
     /**
       * 删除
@@ -22,16 +22,16 @@ public interface BlogMapper {
     /**
       * 修改
     */
-    int updateById(Blog blog);
+    int updateById(Activity activity);
 
     /**
       * 根据ID查询
     */
-    Blog selectById(Integer id);
+    Activity selectById(Integer id);
 
     /**
       * 查询所有
     */
-    List<Blog> selectAll(Blog blog);
+    List<Activity> selectAll(Activity activity);
 
 }

@@ -5,7 +5,7 @@
     <div class="front-header">
       <div class="front-header-left">
         <img src="@/assets/imgs/logo.png" alt="">
-        <div class="title">项目前台</div>
+        <div class="title">博客论坛平台</div>
       </div>
       <div class="front-header-center">
         <div class="front-header-nav">
@@ -14,6 +14,10 @@
 						<el-menu-item index="/front/person">个人中心</el-menu-item>
           </el-menu>
         </div>
+      </div>
+      <div>
+        <el-input placeholder="请输入关键字搜索" v-model="blogname" style="width: 200px; margin-right: 10px" clearable></el-input>
+        <el-button type="success">搜索</el-button>
       </div>
       <div class="front-header-right">
         <div v-if="!user.username">
@@ -24,7 +28,7 @@
           <el-dropdown>
             <div class="front-header-dropdown">
               <img :src="user.avatar" alt="">
-              <div style="margin-left: 10px">
+              <div style="margin-left: 10px;color: #fff;">
                 <span>{{ user.name }}</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
               </div>
             </div>
@@ -54,6 +58,7 @@ export default {
     return {
       top: '',
       notice: [],
+      blogname: '',
       user: JSON.parse(localStorage.getItem("xm-user") || '{}'),
     }
   },

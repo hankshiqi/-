@@ -1,11 +1,8 @@
 package com.example.service;
 
 import cn.hutool.core.date.DateUtil;
-import com.example.entity.Account;
-import com.example.entity.Blog;
-import com.example.entity.Category;
-import com.example.entity.User;
-import com.example.mapper.BlogMapper;
+import com.example.entity.*;
+import com.example.mapper.ActivityMapper;
 import com.example.mapper.CategoryMapper;
 import com.example.mapper.UserMapper;
 import com.example.utils.TokenUtils;
@@ -15,15 +12,16 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 公告信息表业务处理
  **/
 @Service
-public class BlogService {
+public class ActivityService {
 
     @Resource
-    private BlogMapper blogMapper;
+    private ActivityMapper activityMapper;
     @Resource
     private CategoryMapper categoryMapper;
     @Resource
@@ -31,26 +29,16 @@ public class BlogService {
     /**
      * 新增
      */
-    public void add(Blog blog) {
-        Account currentUser = TokenUtils.getCurrentUser();
-        blog.setDate(DateUtil.now());
-        String categoryName = blog.getCategoryName();
-        String userName = blog.getUserName();
-        //new User().se
-        User user = userMapper.selectByUsername(userName);
-        Integer userId = user.getId();
-        blog.setUserId(userId);
-        Category category = categoryMapper.selectByCategoryname(categoryName);
-        Integer categoryId = category.getId();
-        blog.setCategoryId(categoryId);
-        blogMapper.insert(blog);
+    public void add(Activity activity) {
+
+        activityMapper.insert(activity);
     }
 
     /**
      * 删除
      */
     public void deleteById(Integer id) {
-        blogMapper.deleteById(id);
+        activityMapper.deleteById(id);
     }
 
     /**
@@ -58,38 +46,45 @@ public class BlogService {
      */
     public void deleteBatch(List<Integer> ids) {
         for (Integer id : ids) {
-            blogMapper.deleteById(id);
+            activityMapper.deleteById(id);
         }
     }
 
     /**
      * 修改
      */
-    public void updateById(Blog blog) {
-        blogMapper.updateById(blog);
+    public void updateById(Activity activity) {
+        activityMapper.updateById(activity);
     }
 
     /**
      * 根据ID查询
      */
-    public Blog selectById(Integer id) {
-        return blogMapper.selectById(id);
+    public Activity selectById(Integer id) {
+        return activityMapper.selectById(id);
     }
 
     /**
      * 查询所有
      */
-    public List<Blog> selectAll(Blog blog) {
-        return blogMapper.selectAll(blog);
+    public List<Activity> selectAll(Activity activity) {
+        return activityMapper.selectAll(activity);
     }
 
     /**
      * 分页查询
      */
-    public PageInfo<Blog> selectPage(Blog blog, Integer pageNum, Integer pageSize) {
+    public PageInfo<Activity> selectPage(Activity activity, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Blog> list = blogMapper.selectAll(blog);
+        List<Activity> list = activityMapper.selectAll(activity);
         return PageInfo.of(list);
     }
 
+    public List<Activity> selectTopActivity() {
+        List<Activity> activities = activityMapper.selectAll(null);
+        activities=activities.stream().sorted((a,b)->b.getReadCount().compareTo(a.getReadCount()))
+                .limit(2)
+                .collect(Collectors.toList());
+        return activities;
+    }
 }
