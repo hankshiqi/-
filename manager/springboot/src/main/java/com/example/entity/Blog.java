@@ -36,4 +36,5 @@ public class Blog implements Serializable {
     private Integer collectsNum;
     private Boolean isLiked;
     private Boolean isCollected;
+
 }

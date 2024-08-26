@@ -8,13 +8,23 @@ const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location) {
   return originalPush.call(this, location).catch(err => err)
 }
-
 const routes = [
   {
     path: '/',
     name: 'Manager',
     component: () => import('../views/Manager.vue'),
-    redirect: '/home',  // 重定向到主页
+    redirect: ()=>{
+      let user = JSON.parse(localStorage.getItem("xm-user") || '{}');
+      if (user.role) {
+        if (user.role === 'USER') {
+          return '/front/home'
+        } else {
+          return '/home'
+        }
+      } else {
+        return '/login'
+      }
+    } , // 重定向到主页
     children: [
       { path: '403', name: 'NoAuth', meta: { name: '无权限' }, component: () => import('../views/manager/403') },
       { path: 'home', name: 'Home', meta: { name: '系统首页' }, component: () => import('../views/manager/Home') },
@@ -28,16 +38,22 @@ const routes = [
       { path: 'blog', name: 'Blog', meta: { name: '博客管理' }, component: () => import('../views/manager/Blog') },
       { path: 'activity', name: 'Activity', meta: { name: '活动管理' }, component: () => import('../views/manager/Activity') },
       { path: 'comment', name: 'Comment', meta: { name: '评论管理' }, component: () => import('../views/manager/Comment') },
+      { path: 'activitySign', name: 'ActivitySign', meta: { name: '报名管理' }, component: () => import('../views/manager/ActivitySign') },
     ]
   },
   {
     path: '/front',
     name: 'Front',
     component: () => import('../views/Front.vue'),
+    redirect: '/front/home',
     children: [
       { path: 'home', name: 'Home', meta: { name: '系统首页' }, component: () => import('../views/front/Home') },
       { path: 'person', name: 'Person', meta: { name: '个人信息' }, component: () => import('../views/front/Person') },
       { path: 'blogDetail', name: 'BlogDetail', meta: { name: '博客详情' }, component: () => import('../views/front/BlogDetail') },
+      { path: 'search', name: 'Search', meta: { name: '搜索结果' }, component: () => import('../views/front/Search') },
+      { path: 'activity', name: 'Activity', meta: { name: '活动详情' }, component: () => import('../views/front/Activity') },
+      { path: 'activityDetail/:id', name: 'ActivityDetail', meta: { name: '活动页面' }, component: () => import('../views/front/ActivityDetail') },
+      { path: 'newBlog', name: 'NewBlog', meta: { name: '修改博客' }, component: () => import('../views/front/NewBlog') },
     ]
   },
   { path: '/login', name: 'Login', meta: { name: '登录' }, component: () => import('../views/Login.vue') },

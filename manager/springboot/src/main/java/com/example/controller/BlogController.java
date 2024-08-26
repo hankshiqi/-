@@ -85,6 +85,23 @@ public class BlogController {
         PageInfo<Blog> page = blogService.selectPage(blog, pageNum, pageSize);
         return Result.success(page);
     }
+    @GetMapping("/selectPageByUser")
+
+    public Result selectPageByUser(Blog blog,
+                             @RequestParam(defaultValue = "1") Integer pageNum,
+                             @RequestParam(defaultValue = "10") Integer pageSize) {
+        PageInfo<Blog> page = blogService.selectPageByUser(blog, pageNum, pageSize);
+        return Result.success(page);
+    }
+    @GetMapping("/selectPageCollect")
+    public Result selectPageCollect(Blog blog,
+                             @RequestParam(defaultValue = "1") Integer pageNum,
+                             @RequestParam(defaultValue = "10") Integer pageSize) {
+        PageInfo<Blog> page = blogService.selectPageCollect(blog, pageNum, pageSize);
+        return Result.success(page);
+    }
+
+
     @GetMapping("/selectTop")
     public Result selectTop(){
         List<Blog> list=blogService.selectTop();
@@ -111,4 +128,10 @@ public class BlogController {
         return Result.success(count);
     }
 
+    //更新阅读量
+    @PutMapping("/updateReadCount/{id}")
+    public Result updateReadCount(@PathVariable Integer id){
+        blogService.updateReadCount(id);
+        return Result.success();
+    }
 }

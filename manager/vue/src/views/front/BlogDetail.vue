@@ -10,7 +10,8 @@
                     <div style="color: #666; margin-bottom: 20px;">
                         <span style="margin-right: 20px;"><i class="el-icon-user"></i> {{ blogInfo.userName }}</span>
                         <span style="margin-right: 20px"><i class="el-icon-date"></i> {{ blogInfo.date }}</span>
-                        <span><i class="iconfont icon-dianzan"></i> 100</span>
+                        <span style="margin-right: 20px"><i class="iconfont icon-dianzan"></i> {{ blogInfo.likesNum }}</span>
+                        <span><i class="iconfont icon-yanjing"></i> {{ blogInfo.readCount }}</span>
                     </div>
                     <div class="w-e-text">
                         <div v-html="content"></div>
@@ -31,66 +32,7 @@
                 </div>
 
                 <!--评论开始-->
-                <div class="card">
-                    <h2>评论 {{totalNum}}</h2>
-                    <div style="margin: 20px 0;">
-                        <el-input type="textarea" placeholder="请输入评论内容" v-model="commentContent"
-                            style="margin: 10px 0;">
-                        </el-input>
-                        <el-button type="primary" @click="addComment" style="text-align: right;">发表评论</el-button>
-                    </div>
-                    <div style="margin: 20px 0; display: flex;" v-for="comment in commentList" :key="comment.id">
-                        <img :src="comment.userAvatar" alt=""
-                            style="width: 50px; height: 50px; border-radius: 50%; margin-right: 20px;">
-                        <div style="flex: 1;align-items: center;">
-                            <div style="margin-bottom: 10px;">
-                                <div style="font-size: 16px; color: #888;">{{ comment.userName }}</div>
-                                <div style="margin: 10px 0;">{{ comment.content }}</div>
-                                <div style="font-size: 14px; color: #888;">{{ comment.time }}
-                                    <span style="cursor: pointer;" @click="changeReply(comment)" v-if="userLocal.id !== comment.userId"><i
-                                            :style="{ color: comment.atReply ? '#59aeff' : '#888' }"
-                                            class="el-icon-s-comment"></i> 评论</span>
-                                </div>
-                                <div v-if="comment.atReply" style="margin: 10px 0;">
-                                    <el-input type="textarea" placeholder="请输入回复内容" v-model="comment.replyContent"
-                                        style="margin: 10px 0;"></el-input>
-                                    <el-button type="primary" @click="addReply(comment)"
-                                        style="text-align: right;">回复</el-button>
-                                </div>
-                            </div>
-                            <!--子评论-->
-                            <div style="margin: 20px 0; display: flex;" v-for="child in comment.children"
-                                :key="child.id">
-                                <img :src="child.userAvatar" alt=""
-                                    style="width: 50px; height: 50px; border-radius: 50%; margin-right: 20px;">
-                                <div style="flex: 1; ">
-                                    <div style="margin-bottom: 10px;">
-                                        <div style="font-size: 16px; color: #888;">{{ child.userName }} 
-                                            <span
-                                                style="color: #333" v-if="child.replyName !== comment.userName">回复 {{
-                            child.replyName }}
-                                            </span>
-                                        </div>
-                                        <div style="margin: 10px 0;">{{ child.content }}</div>
-                                        <div style="font-size: 14px; color: #888;">{{ child.time }}
-                                            <span style="cursor: pointer;" @click="changeReply(child)" v-if="userLocal.id !== child.userId">
-                                                <i :style="{ color: child.atReply ? '#59aeff' : '#888' }"
-                                                    class="el-icon-s-comment"></i> 评论
-                                            </span>
-                                        </div>
-                                        <div v-if="child.atReply" style="margin: 10px 0;">
-                                            <el-input type="textarea" placeholder="请输入回复内容"
-                                                v-model="child.replyContent" style="margin: 10px 0;"></el-input>
-                                            <el-button type="primary" @click="addReply(child)"
-                                                style="text-align: right;">回复</el-button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--评论结束-->
+                <Comment :fid="blogId" module="文章"/>
 
             </div>
 
@@ -156,8 +98,9 @@
 <script>
 import E from "wangeditor"
 import hljs from 'highlight.js'
+import Comment from "../../components/Comment.vue";
 export default {
-    name: 'HelloWorld',
+    name: 'BlogDetail',
     data() {
         return {
             blogId: this.$route.query.blogId,
@@ -167,36 +110,28 @@ export default {
             totalBlogsNum: 0,
             totalLikesNum: 0,
             totalCollectsNum: 0,
-            commentContent: '',
-            commentList: [],
-            totalNum: 0,
-            userLocal: JSON.parse(localStorage.getItem('xm-user') || '{}'),
+           
         };
     },
 
-    components: {},
+    components: {
+        Comment
+    },
 
     computed: {},
 
+    created(){
+    },
     mounted() {
-        this.getBlogInfo();
-        this.loadComment();
-        this.getCount();
+        this.$request.put('/blog/updateReadCount/'+this.blogId).then(res => {
+            this.getBlogInfo();
+
+        })
+        
     },
 
     methods: {
-        addReply(comment) {
-            this.$request.post('/comment/add', {
-                pid: comment.id,
-                content: comment.replyContent,
-                rootId: comment.rootId,
-                module: comment.module,
-                fid: comment.fid
-            }).then(res => {
-                comment.replyContent = '';
-                this.loadComment();
-            })
-        },
+        
         getBlogInfo() {
             this.$request.get('/blog/selectById/' + this.blogId).then(res => {
                 this.content = res.data.content;
@@ -244,40 +179,7 @@ export default {
             }).then(res => {
                 this.getBlogInfo();
             })
-        },
-        addComment() {
-            this.$request.post('/comment/add', {
-                fid: this.blogId,
-                content: this.commentContent,
-                module: '文章'
-            }).then(res => {
-                //console.log(res.data)
-                this.commentContent = '';
-                this.loadComment();
-            })
-        },
-        loadComment() {
-            this.$request.get('/comment/selectForUser', {
-                params: {
-                    fid: this.blogId,
-                    module: '文章'
-                }
-            }).then(res => {
-                this.commentList = res.data;
-            })
-        },
-        changeReply(comment) {
-            this.$set(comment, 'atReply', !comment.atReply)
-        },
-        getCount(){
-            this.$request.get('/comment/getCount', {
-                params: {
-                    fid: this.blogId,
-                    module: '文章'
-                }}).then(res => {
-                this.totalNum = res.data;
-            })
-        }
+        },        
     }
 }
 

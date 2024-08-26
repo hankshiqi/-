@@ -30,6 +30,10 @@ public class Activity implements Serializable {
     private String address;
     private Integer readCount;
     private String host;
-
-
+    private boolean isDue;
+    private boolean isSign;
+    private Boolean isLiked;
+    private Boolean isCollected;
+    private Integer likeCount;
+    private Integer collectCount;
 }

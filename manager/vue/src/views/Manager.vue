@@ -1,7 +1,7 @@
 <template>
-  <div class="manager-container">
-    <!--  头部  -->
-    <div class="manager-header">
+  <div class="manager-container" >
+    <div v-if="user.role==='ADMIN'">
+      <div class="manager-header">
       <div class="manager-header-left">
         <img src="@/assets/imgs/logo.png" />
         <div class="title">博客论坛平台</div>
@@ -47,6 +47,7 @@
             <el-menu-item index="/blog">博客管理</el-menu-item>
             <el-menu-item index="/activity">活动管理</el-menu-item>
             <el-menu-item index="/comment">评论管理</el-menu-item>
+            <el-menu-item index="/activitySign">报名管理</el-menu-item>
           </el-submenu>
 
           <el-submenu index="user" v-if="user.role === 'ADMIN'">
@@ -63,6 +64,11 @@
       <div class="manager-main-right">
         <router-view @update:user="updateUser" />
       </div>
+    </div>
+    </div>
+    <!--  头部  -->
+    <div v-else>
+      没有权限访问
     </div>
 
   </div>

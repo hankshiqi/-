@@ -11,13 +11,14 @@
         <div class="front-header-nav">
           <el-menu :default-active="$route.path" mode="horizontal" router>
 						<el-menu-item index="/front/home">首页</el-menu-item>
-						<el-menu-item index="/front/person">个人中心</el-menu-item>
+						<el-menu-item index="/front/activity">活动中心</el-menu-item>
+						<el-menu-item index="/front/person" v-if="user.role === 'USER'">个人中心</el-menu-item>
           </el-menu>
         </div>
       </div>
       <div>
-        <el-input placeholder="请输入关键字搜索" v-model="blogname" style="width: 200px; margin-right: 10px" clearable></el-input>
-        <el-button type="success">搜索</el-button>
+        <el-input placeholder="请输入关键字搜索" v-model="title" style="width: 200px; margin-right: 10px" clearable></el-input>
+        <el-button type="success" @click="searchBlogs(title)" clearable>搜索</el-button>
       </div>
       <div class="front-header-right">
         <div v-if="!user.username">
@@ -58,7 +59,7 @@ export default {
     return {
       top: '',
       notice: [],
-      blogname: '',
+      title: '',
       user: JSON.parse(localStorage.getItem("xm-user") || '{}'),
     }
   },
@@ -67,6 +68,9 @@ export default {
     this.loadNotice()
   },
   methods: {
+    searchBlogs(){
+      location.href = `/front/search?title=${this.title}`
+    },
     loadNotice() {
       this.$request.get('/notice/selectAll').then(res => {
         this.notice = res.data

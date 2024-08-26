@@ -41,4 +41,6 @@ public interface BlogMapper {
 
     @Select("select * from blog where user_id = #{userId}")
     List<Blog> selectAllofOneAuthor(Integer userId);
+
+    List<Blog> selectPageCollect(Blog blog);
 }

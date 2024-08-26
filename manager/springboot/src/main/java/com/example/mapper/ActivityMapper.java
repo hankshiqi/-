@@ -1,6 +1,7 @@
 package com.example.mapper;
 
 import com.example.entity.Activity;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -34,4 +35,7 @@ public interface ActivityMapper {
     */
     List<Activity> selectAll(Activity activity);
 
+    List<Activity> selectPageByUser(Integer userId);
+
+    List<Activity> selectPageCollect(Integer userId);
 }

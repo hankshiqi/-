@@ -30,7 +30,6 @@
             <if test="userName != null"> and user.name like concat('%',#{userName},'%')</if>
             <if test="fid != null"> and comment.fid like concat('%',#{fid},'%')</if>
             <if test="module != null"> and comment.module like concat('%',#{module},'%')</if>
-            <if test="rootId != null"> and comment.root_id = #{rootId}</if>
         and pid is null
         </where>
         order by id desc

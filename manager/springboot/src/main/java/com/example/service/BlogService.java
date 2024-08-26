@@ -41,6 +41,8 @@ public class BlogService {
     private LikesService likesService;
     @Resource
     private CollectsService collectsService;
+    @Resource
+    private ActivitySignService activitySignService;
     /**
      * 新增
      */
@@ -88,6 +90,7 @@ public class BlogService {
      * 根据ID查询
      */
     public Blog selectById(Integer id) {
+
         Blog blog = blogMapper.selectById(id);
         blog.setUser(userService.selectById(blog.getUserId()));
         //获取blog的点赞数量
@@ -165,5 +168,25 @@ public class BlogService {
             totalCollects+=blog.getCollectsNum();
         }
         return totalCollects;
+    }
+
+    public void updateReadCount(Integer id) {
+        Blog blog = blogMapper.selectById(id);
+        blog.setReadCount(blog.getReadCount()+1);
+        blogMapper.updateById(blog);
+    }
+
+    public PageInfo<Blog> selectPageByUser(Blog blog, Integer pageNum, Integer pageSize) {
+        Account currentUser = TokenUtils.getCurrentUser();
+        blog.setUserId(currentUser.getId());
+        return this.selectPage(blog, pageNum, pageSize);
+    }
+
+    public PageInfo<Blog> selectPageCollect(Blog blog, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Account currentUser = TokenUtils.getCurrentUser();
+        blog.setUserId(currentUser.getId());
+        List<Blog> list = blogMapper.selectPageCollect(blog);
+        return PageInfo.of(list);
     }
 }

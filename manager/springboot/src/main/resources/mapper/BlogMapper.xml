@@ -17,6 +17,7 @@
             <if test="title != null"> and blog.title like concat('%',#{title},'%')</if>
             <if test="userName != null"> and user.name like concat('%',#{userName},'%')</if>
             <if test="categoryName != null"> and category.name like concat('%',#{categoryName},'%')</if>
+            <if test="userId != null"> and blog.user_id = #{userId}</if>
         </where>
         order by blog.id desc
     </select>
@@ -27,6 +28,20 @@
         left join user on blog.user_id = user.id
         left join category on blog.category_id = category.id
         where blog.id = #{id}
+    </select>
+    <select id="selectPageCollect" resultType="com.example.entity.Blog">
+        select blog.*,user.name as userName,category.name as categoryName
+        from collects
+        left join blog on blog.id = collects.fid
+        left join user on blog.user_id = user.id
+        left join category on blog.category_id = category.id
+        <where>
+            and collects.module='文章'
+            <if test="userName != null"> and user.name like concat('%',#{userName},'%')</if>
+            <if test="categoryName != null"> and category.name like concat('%',#{categoryName},'%')</if>
+            <if test="userId != null"> and collects.user_id = #{userId}</if>
+        </where>
+        order by collects.id desc
     </select>
 
     <delete id="deleteById">

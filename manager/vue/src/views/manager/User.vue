@@ -21,7 +21,7 @@
         <el-table-column prop="phone" label="电话"></el-table-column>
         <el-table-column prop="email" label="邮箱"></el-table-column>
         <el-table-column prop="sex" label="性别"></el-table-column>
-        <el-table-column prop="info" label="介绍"></el-table-column>
+        <el-table-column prop="info" label="介绍" show-overflow-tooltip></el-table-column>
         <el-table-column prop="birth" label="生日"></el-table-column>
         <el-table-column label="头像">
           <template v-slot="scope">

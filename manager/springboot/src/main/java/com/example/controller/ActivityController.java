@@ -4,6 +4,7 @@ import com.example.common.Result;
 import com.example.entity.Activity;
 import com.example.entity.Blog;
 import com.example.service.ActivityService;
+import com.example.service.ActivitySignService;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -84,10 +85,35 @@ public class ActivityController {
         PageInfo<Activity> page = activityService.selectPage(activity, pageNum, pageSize);
         return Result.success(page);
     }
+
+    //用户查询我的活动
+    @GetMapping("/selectPageByUser")
+    public Result selectPageByUser(
+                             @RequestParam(defaultValue = "1") Integer pageNum,
+                             @RequestParam(defaultValue = "10") Integer pageSize) {
+        PageInfo<Activity> page = activityService.selectPageByUser(pageNum, pageSize);
+        return Result.success(page);
+    }
+    @GetMapping("/selectPageCollect")
+
+    public Result selectPageCollect(
+                             @RequestParam(defaultValue = "1") Integer pageNum,
+                             @RequestParam(defaultValue = "10") Integer pageSize
+                             ) {
+        PageInfo<Activity> page = activityService.selectPageCollect(pageNum, pageSize);
+        return Result.success(page);
+    }
     @GetMapping("/selectTopActivity")
     public Result selectTopActivity() {
         List<Activity> list=activityService.selectTopActivity();
         return Result.success(list);
+    }
+
+    //更新阅读量
+    @PutMapping("/updateReadCount/{id}")
+    public Result updateReadCount(@PathVariable Integer id){
+        activityService.updateReadCount(id);
+        return Result.success();
     }
 
 }

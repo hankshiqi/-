@@ -1,6 +1,7 @@
 package com.example.service;
 
 import cn.hutool.core.date.DateUtil;
+import com.example.common.enums.ModuleCategoryEnum;
 import com.example.entity.*;
 import com.example.mapper.ActivityMapper;
 import com.example.mapper.CategoryMapper;
@@ -26,6 +27,12 @@ public class ActivityService {
     private CategoryMapper categoryMapper;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private ActivitySignService activitySignService;
+    @Resource
+    private LikesService likesService;
+    @Resource
+    private CollectsService collectsService;
     /**
      * 新增
      */
@@ -60,8 +67,23 @@ public class ActivityService {
     /**
      * 根据ID查询
      */
-    public Activity selectById(Integer id) {
-        return activityMapper.selectById(id);
+    public Activity selectById(Integer actId) {
+        Activity activity = activityMapper.selectById(actId);
+        Account currentUser = TokenUtils.getCurrentUser();
+
+        if(activity!=null) {
+            this.checkActivity(activity, currentUser);
+        }
+        //获取当前用户是否点赞
+        Boolean isLiked = likesService.checkLiked(actId, ModuleCategoryEnum.ACTIVITY.name, currentUser.getId()) != null;
+        activity.setIsLiked(isLiked);
+        //获取当前用户是否收藏
+        Boolean isCollected = collectsService.checkCollected(actId, ModuleCategoryEnum.ACTIVITY.name, currentUser.getId()) != null;
+        activity.setIsCollected(isCollected);
+        //获取当前活动的点赞数和收藏数
+        activity.setLikeCount(likesService.getLikesNum(actId, ModuleCategoryEnum.ACTIVITY.name));
+        activity.setCollectCount(collectsService.getCollectsNum(actId, ModuleCategoryEnum.ACTIVITY.name));
+        return activity;
     }
 
     /**
@@ -77,7 +99,11 @@ public class ActivityService {
     public PageInfo<Activity> selectPage(Activity activity, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<Activity> list = activityMapper.selectAll(activity);
-        return PageInfo.of(list);
+        Account currentUser = TokenUtils.getCurrentUser();
+        for (Activity activity1 : list) {
+            this.checkActivity(activity1, currentUser);
+        }
+            return PageInfo.of(list);
     }
 
     public List<Activity> selectTopActivity() {
@@ -86,5 +112,37 @@ public class ActivityService {
                 .limit(2)
                 .collect(Collectors.toList());
         return activities;
+    }
+
+    //判断到期和是否已经报名
+    public void checkActivity(Activity activity,Account account){
+        if(DateUtil.parse(activity.getEnd()).before(DateUtil.date())){
+            activity.setDue(true);
+        }
+        boolean signed = activitySignService.checkSign(activity.getId(), account.getId());
+        activity.setSign(signed);
+    }
+
+    public void updateReadCount(Integer id) {
+        Activity activity = activityMapper.selectById(id);
+        activity.setReadCount(activity.getReadCount() + 1);
+        activityMapper.updateById(activity);
+    }
+
+    public PageInfo<Activity> selectPageByUser(Integer pageNum, Integer pageSize) {
+        Account currentUser = TokenUtils.getCurrentUser();
+        PageHelper.startPage(pageNum, pageSize);
+        List<Activity> list = activityMapper.selectPageByUser(currentUser.getId());
+        for (Activity activity : list) {
+            this.checkActivity(activity, currentUser);
+        }
+        return PageInfo.of(list);
+    }
+
+    public PageInfo<Activity> selectPageCollect(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Account currentUser = TokenUtils.getCurrentUser();
+        List<Activity> list = activityMapper.selectPageCollect(currentUser.getId());
+        return PageInfo.of(list);
     }
 }
